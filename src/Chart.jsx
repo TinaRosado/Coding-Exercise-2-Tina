@@ -1,564 +1,12 @@
 
-
-//--------------------------------
-
-// import * as d3 from "d3";
-// import { useEffect, useState, useRef } from 'react';
-
-// export function Chart({ data }) {
-//   const marginLeft = 200;
-//   const width = 1000;
-//   const height = 2000;
-//   const marginRight = 40;
-//   const marginTop = 20;
-//   const marginBottom = 20;
-//   const heightBound = height - marginTop - marginBottom;
-//   const widthBound = width - marginLeft - marginRight;
-  
-//   const svgRef = useRef(null);
-//   const [selectedTopic, setSelectedTopic] = useState(null);
-
-//   useEffect(() => {
-//     if (!data || data.length === 0) return;
-
-//     // Filter data for 2014-2024
-//     const filteredData = data.filter(d => {
-//       const year = new Date(d.date).getFullYear();
-//       return year >= 2014 && year <= 2024;
-//     });
-
-//     // Create scales
-//     const timeScale = d3.scaleTime()
-//       .domain(d3.extent(filteredData, d => new Date(d.date)))
-//       .range([marginTop, heightBound]);
-
-//     const rankScale = d3.scaleLinear()
-//       .domain([0, d3.max(filteredData, d => d.monthly_rank)])
-//       .range([marginLeft, marginLeft + widthBound]);
-
-//     const sizeScale = d3.scaleLog()
-//       .domain([20, d3.max(filteredData, d => d.word_count)])
-//       .range([2, 20]);
-
-//     // Clear previous content
-//     d3.select(svgRef.current).selectAll("*").remove();
-
-//     // Create SVG and append elements
-//     const svg = d3.select(svgRef.current);
-
-//     // Add axes
-//     const yAxis = d3.axisLeft(timeScale)
-//       .ticks(d3.timeMonth.every(3))
-//       .tickFormat(d3.timeFormat("%b %Y"));
-
-//     svg.append("g")
-//       .attr("class", "y-axis")
-//       .attr("transform", `translate(${marginLeft}, 0)`)
-//       .call(yAxis);
-
-//     const xAxis = d3.axisBottom(rankScale);
-    
-//     svg.append("g")
-//       .attr("class", "x-axis")
-//       .attr("transform", `translate(0, ${heightBound})`)
-//       .call(xAxis);
-
-//     // Add tooltip
-//     const tooltip = d3.select("body").append("div")
-//       .attr("class", "tooltip")
-//       .style("position", "absolute")
-//       .style("visibility", "hidden")
-//       .style("background-color", "white")
-//       .style("padding", "10px")
-//       .style("border", "1px solid #ddd")
-//       .style("border-radius", "4px")
-//       .style("pointer-events", "none");
-
-//     // Add rectangles
-//     const rectangles = svg.selectAll("rect")
-//       .data(filteredData)
-//       .enter()
-//       .append("rect")
-//       .attr("x", d => rankScale(d.monthly_rank))
-//       .attr("y", d => timeScale(new Date(d.date)))
-//       .attr("width", d => sizeScale(d.word_count))
-//       .attr("height", d => sizeScale(d.word_count))
-//       .attr("fill", "#00008B")
-//       .attr("opacity", 0.7)
-//       .attr("transform", d => `translate(${-sizeScale(d.word_count)/2}, ${-sizeScale(d.word_count)/2})`)
-//       .style("cursor", "pointer");
-
-//     // Add hover effects
-//     rectangles
-//       .on("mouseover", (event, d) => {
-//         const dateStr = new Date(d.date).toLocaleDateString('en-US', { 
-//           month: 'numeric', 
-//           day: 'numeric', 
-//           year: 'numeric' 
-//         });
-        
-//         tooltip
-//           .style("visibility", "visible")
-//           .html(`${d.topic_label}<br>${d.title} <b>${dateStr}</b>`);
-//       })
-//       .on("mousemove", (event) => {
-//         tooltip
-//           .style("top", (event.pageY - 10) + "px")
-//           .style("left", (event.pageX + 10) + "px");
-//       })
-//       .on("mouseout", () => {
-//         tooltip.style("visibility", "hidden");
-//       })
-//       .on("click", (event, d) => {
-//         const newTopic = selectedTopic === d.topic_label ? null : d.topic_label;
-//         setSelectedTopic(newTopic);
-        
-//         rectangles
-//           .transition()
-//           .duration(300)
-//           .attr("opacity", item => {
-//             if (!newTopic) return 0.7;
-//             return item.topic_label === newTopic ? 0.7 : 0.1;
-//           });
-//       });
-
-//     // Cleanup
-//     return () => {
-//       d3.select("body").selectAll(".tooltip").remove();
-//     };
-//   }, [data, selectedTopic]);
-
-//   return (
-//     <div>
-//       <p className="mb-4 text-lg">Svalbard Articles Scatter Plot (2014-2024)</p>
-//       <svg 
-//         ref={svgRef}
-//         width={width} 
-//         height={height}
-//         className="bg-white"
-//       />
-//     </div>
-//   );
-// }
-
-// export default Chart;
-
-//--------------------------------
-
-// import * as d3 from "d3";
-// import { useEffect, useState, useRef } from 'react';
-
-// export function Chart({ data }) {
-//   const marginLeft = 200;
-//   const width = 1000;
-//   const height = 2600;
-//   const marginRight = 40;
-//   const marginTop = 20;
-//   const marginBottom = 20;
-//   const heightBound = height - marginTop - marginBottom;
-//   const widthBound = width - marginLeft - marginRight;
-  
-//   const svgRef = useRef(null);
-//   const [selectedTopic, setSelectedTopic] = useState(null);
-
-//   useEffect(() => {
-//     if (!data || data.length === 0) return;
-
-//     // Filter data for 2014-2024
-//     const filteredData = data.filter(d => {
-//       const date = new Date(d.date);
-//       return date.getFullYear() >= 2014 && date.getFullYear() <= 2024;
-//     });
-
-//     // Get array of unique month-years for the y-axis
-//     const uniqueMonthYears = Array.from(new Set(
-//       filteredData.map(d => {
-//         const date = new Date(d.date);
-//         return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-//       })
-//     )).sort();
-
-//     // Create scales
-//     const timeScale = d3.scalePoint()
-//       .domain(uniqueMonthYears)
-//       .range([marginTop, heightBound])
-//       .padding(0.5);
-
-//     const rankScale = d3.scaleLinear()
-//       .domain([0, d3.max(filteredData, d => d.monthly_rank)])
-//       .range([marginLeft, marginLeft + widthBound]);
-
-//     const sizeScale = d3.scaleLog()
-//       .domain([50, d3.max(filteredData, d => d.word_count)])
-//       .range([2, 16]);
-    
-//     const heightScale = d3.scaleLog()
-//       .domain([50, d3.max(filteredData, d => d.word_count)])
-//       .range([2, 18]);
-
-//     const widthScale = d3.scaleSqrt()
-//       .domain([50, d3.max(filteredData, d => d.word_count)])
-//       .range([2, 10]);
- 
-      
-//     // Clear previous content
-//     d3.select(svgRef.current).selectAll("*").remove();
-
-//     // Create SVG and append elements
-//     const svg = d3.select(svgRef.current);
-
-//     // Add axes
-//     const yAxis = d3.axisLeft()
-//       .scale(timeScale)
-//       .tickFormat(d => {
-//         const [year, month] = d.split('-');
-//         const date = new Date(year, month - 1);
-//         return d3.timeFormat("%b %Y")(date);
-//       });
-
-//     svg.append("g")
-//       .attr("class", "y-axis")
-//       .attr("transform", `translate(${marginLeft}, 0)`)
-//       .call(yAxis);
-
-//     const xAxis = d3.axisBottom(rankScale);
-    
-//     svg.append("g")
-//       .attr("class", "x-axis")
-//       .attr("transform", `translate(0, ${heightBound})`)
-//       .call(xAxis);
-
-//     // Add tooltip
-//     const tooltip = d3.select("body").append("div")
-//       .attr("class", "tooltip")
-//       .style("position", "absolute")
-//       .style("visibility", "hidden")
-//       .style("background-color", "white")
-//       .style("padding", "10px")
-//       .style("border", "1px solid #ddd")
-//       .style("border-radius", "4px")
-//       .style("pointer-events", "none");
-
-//     // Add rectangles
-//     const rectangles = svg.selectAll("rect")
-//       .data(filteredData)
-//       .enter()
-//       .append("rect")
-//       .attr("x", d => rankScale(d.monthly_rank))
-//       .attr("y", d => {
-//         const date = new Date(d.date);
-//         const monthYear = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-//         return timeScale(monthYear);
-//       })
-//       .attr("width", d => widthScale(d.word_count))
-//       .attr("height", d => heightScale(d.word_count*50))
-//       .attr("fill", "#00008B")
-//       .attr("opacity", 0.7)
-//       .attr("rx", 5)
-//       .attr("ry", 5)
-//       .attr("transform", d => `translate(${-sizeScale(d.word_count)/2}, ${-sizeScale(d.word_count)/2})`)
-//       .style("cursor", "pointer");
-
-//     // Add hover effects
-//     rectangles
-//       .on("mouseover", (event, d) => {
-//         const dateStr = new Date(d.date).toLocaleDateString('en-US', { 
-//           month: 'numeric', 
-//           day: 'numeric', 
-//           year: 'numeric' 
-//         });
-        
-//         tooltip
-//           .style("visibility", "visible")
-//           .html(`${d.topic_label}<br>${d.title} <b>${dateStr}</b>`);
-//       })
-//       .on("mousemove", (event) => {
-//         tooltip
-//           .style("top", (event.pageY - 10) + "px")
-//           .style("left", (event.pageX + 10) + "px");
-//       })
-//       .on("mouseout", () => {
-//         tooltip.style("visibility", "hidden");
-//       })
-//       .on("click", (event, d) => {
-//         const newTopic = selectedTopic === d.topic_label ? null : d.topic_label;
-//         setSelectedTopic(newTopic);
-        
-//         rectangles
-//           .transition()
-//           .duration(300)
-//           .attr("opacity", item => {
-//             if (!newTopic) return 0.7;
-//             return item.topic_label === newTopic ? 0.7 : 0.1;
-//           });
-//       });
-
-//     // Cleanup
-//     return () => {
-//       d3.select("body").selectAll(".tooltip").remove();
-//     };
-//   }, [data, selectedTopic]);
-
-//   return (
-//     <div>
-//       <p className="mb-4 text-lg">Svalbard Articles Scatter Plot (2014-2024)</p>
-//       <svg 
-//         ref={svgRef}
-//         width={width} 
-//         height={height}
-//         className="bg-white"
-//       />
-//     </div>
-//   );
-// }
-
-// export default Chart;
-
-
-//--------------------------------HERE-------------
-// import * as d3 from "d3";
-// import { useEffect, useState, useRef } from 'react';
-
-// export function Chart({ data }) {
-//   const marginLeft = 200;
-//   const width = 1600;
-//   const height = 1800;
-//   const marginRight = 40;
-//   const marginTop = 20;
-//   const marginBottom = 20;
-//   const heightBound = height - marginTop - marginBottom;
-//   const widthBound = width - marginLeft - marginRight;
-  
-//   const svgRef = useRef(null);
-//   const [selectedTopic, setSelectedTopic] = useState(null);
-
-//   useEffect(() => {
-//     if (!data || data.length === 0) return;
-
-//     // Filter and process data
-//     const processedData = data
-//     .filter(d => {
-//       const date = new Date(d.date);
-//       return date.getFullYear() >= 2014 && 
-//              date.getFullYear() <= 2020 && 
-//              d.word_count > 0;  // Add this condition
-//     })
-//     .map(d => ({
-//       ...d,
-//       dateObj: new Date(d.date)
-//     }));
-
-//     // Group by month-year and sort within groups ('monthly')
-//     const groupedData = d3.group(processedData, 
-//       d => `${d.dateObj.getFullYear()}-${String(d.dateObj.getMonth() + 1).padStart(2, '0')}`
-//     );
-
-//     // Process each group and assign sequential ranks
-//     const sortedData = Array.from(groupedData.entries()).flatMap(([monthYear, articles]) => {
-//       // Sort articles by word count (ascending only)
-//       const sortedArticles = articles.sort((a, b) => {
-//         // Sort by word count (ascending)
-//         return a.word_count - b.word_count;
-//       });
-
-//       // Assign sequential ranks
-//       return sortedArticles.map((article, index) => ({
-//         ...article,
-//         sequentialRank: index + 4
-//       }));
-//     });
-
-
-// //     // Process each group and assign sequential ranks ('weekly')
-// //     const sortedData = Array.from(groupedData.entries()).flatMap(([monthYear, articles]) => {
-// //       // Sort articles by week and word count
-// //       const sortedArticles = articles.sort((a, b) => {
-// //         // Get week numbers
-// //         const weekA = d3.timeWeek.count(d3.timeYear(a.dateObj), a.dateObj);
-// //         const weekB = d3.timeWeek.count(d3.timeYear(b.dateObj), b.dateObj);
-        
-// //         // First sort by week
-// //         const weekDiff = weekA - weekB;
-// //         if (weekDiff !== 0) return weekDiff;
-        
-// //         // Then by word count (ascending)
-// //         return a.word_count - b.word_count;
-// //       });
-
-// //   // Assign sequential ranks
-// //   return sortedArticles.map((article, index) => ({
-// //     ...article,
-// //     sequentialRank: index + 4,
-// //     weekNumber: d3.timeWeek.count(d3.timeYear(article.dateObj), article.dateObj)
-// //   }));
-// // });
-
-//     // // Process each group and assign sequential ranks ('daily')
-//     // const sortedData = Array.from(groupedData.entries()).flatMap(([monthYear, articles]) => {
-//     //   // Sort articles by day and word count
-//     //   const sortedArticles = articles.sort((a, b) => {
-//     //     // First sort by day
-//     //     const dayDiff = a.dateObj.getDate() - b.dateObj.getDate();
-//     //     if (dayDiff !== 0) return dayDiff;
-//     //     // Then by word count (ascending)
-//     //     return a.word_count - b.word_count;
-//     //   });
-
-//     //   // Assign sequential ranks
-//     //   return sortedArticles.map((article, index) => ({
-//     //     ...article,
-//     //     sequentialRank: index + 4
-//     //   }));
-//     // });
-
-
-
-
-
-//     // Get unique month-years for y-axis
-//     const uniqueMonthYears = Array.from(groupedData.keys()).sort();
-
-//     // Create scales
-//     const timeScale = d3.scaleBand()
-//       .domain(uniqueMonthYears)
-//       .range([marginTop, heightBound])
-//       .padding(0.5);
-
-//     const rankScale = d3.scaleLinear()
-//       //.domain([1, 200])
-//       .domain([1, d3.max(sortedData, d => d.sequentialRank)])
-//       .range([marginLeft, marginLeft + widthBound]);
-
-//     // const sizeScale = d3.scaleLog()
-//     //   .domain([d3.min(processedData, d => d.word_count), d3.max(processedData, d => d.word_count)])
-//     //   .range([4, 20]);
-    
-//     const multiHeight = 0.2  
-//     const heightScale = d3.scaleLog()
-//       .domain([d3.min(processedData, d => d.word_count), d3.max(processedData, d => d.word_count)])
-//       .range([3, 26]);
-
-//     const multiWidth = 0.05
-//     const widthScale = d3.scaleSqrt()
-//       .domain([d3.min(processedData, d => d.word_count), d3.max(processedData, d => d.word_count)])
-//       .range([3, 26]);
-
-//     // Clear previous content
-//     d3.select(svgRef.current).selectAll("*").remove();
-
-//     // Create SVG and append elements
-//     const svg = d3.select(svgRef.current);
-
-//     // Add axes
-//     const yAxis = d3.axisLeft()
-//       .scale(timeScale)
-//       .tickFormat(d => {
-//         const [year, month] = d.split('-');
-//         const date = new Date(year, month - 1);
-//         return d3.timeFormat("%b %Y")(date);
-//       });
-
-//     svg.append("g")
-//       .attr("class", "y-axis")
-//       .attr("transform", `translate(${marginLeft}, 0)`)
-//       .call(yAxis);
-
-//     const xAxis = d3.axisBottom(rankScale)
-//       .tickFormat(d => `Article ${d}`);
-    
-//     svg.append("g")
-//       .attr("class", "x-axis")
-//       .attr("transform", `translate(0, ${heightBound})`)
-//       .call(xAxis);
-
-//     // Add tooltip
-//     const tooltip = d3.select("body").append("div")
-//       .attr("class", "tooltip")
-//       .style("position", "absolute")
-//       .style("visibility", "hidden")
-//       .style("background-color", "white")
-//       .style("padding", "10px")
-//       .style("border", "1px solid #ddd")
-//       .style("border-radius", "4px")
-//       .style("pointer-events", "none");
-
-//     // Add rectangles
-//     const rectangles = svg.selectAll("rect")
-//       .data(sortedData)
-//       .enter()
-//       .append("rect")
-//       .attr("class", d => `topic-${d.topic_label.replace(/\s+/g, '-')}`)
-//       .attr("x", d => rankScale(d.sequentialRank))
-//       .attr("y", d => {
-//         const monthYear = `${d.dateObj.getFullYear()}-${String(d.dateObj.getMonth() + 1).padStart(2, '0')}`;
-//         return timeScale(monthYear);
-//       })
-//       // .attr("width", 5)
-//       // .attr("height",15)
-//        .attr("width", d => widthScale(d.word_count*multiWidth))
-//        .attr("height", d => heightScale(d.word_count*multiHeight))
-//       .attr("fill", "black")  // blue #00008B #111D4A
-//       .style("opacity", 1)
-//       .attr("rx", 2)
-//       .attr("ry", 2)
-//       //.attr("transform", d => `translate(${-sizeScale(d.word_count)/2}, ${-sizeScale(d.word_count)/2})`)
-//       .style("cursor", "pointer");
-
-//     // Add hover effects
-//     rectangles
-//       .on("mouseover", (event, d) => {
-//         const dateStr = d.dateObj.toLocaleDateString('en-US', { 
-//           month: 'numeric', 
-//           day: 'numeric', 
-//           year: 'numeric' 
-//         });
-        
-//         tooltip
-//           .style("visibility", "visible")
-//           .html(`${d.topic_label}<br>${d.title} <b>${dateStr}</b><br>Words: ${d.word_count}`);
-//       })
-//       .on("mousemove", (event) => {
-//         tooltip
-//           .style("top", (event.pageY - 10) + "px")
-//           .style("left", (event.pageX + 10) + "px");
-//       })
-//       .on("mouseout", () => {
-//         tooltip.style("visibility", "hidden");
-//       })
-      
-
-//     // Cleanup
-//     return () => {
-//       d3.select("body").selectAll(".tooltip").remove();
-//     };
-//   }, [data, selectedTopic]);
-
-//   return (
-//     <div>
-//       <p className="mb-4 text-lg">Svalbard Articles Scatter Plot (2014-2024)</p>
-//       <svg 
-//         ref={svgRef}
-//         width={width} 
-//         height={height}
-//         className="bg-white"
-//       />
-//     </div>
-//   );
-// }
-
-// export default Chart;
-
-//-----------------------
-
-
 import * as d3 from "d3";
 import { useEffect, useState, useRef } from 'react';
 
 export function Chart({ data }) {
-  const marginLeft = 200;
+  const marginLeft = 100;
   const width = 1200;
   const height = 4000;
-  const marginRight = 40;
+  const marginRight = 80;
   const marginTop = 40;
   const marginBottom = 20;
   const heightBound = height - marginTop - marginBottom;
@@ -644,7 +92,7 @@ export function Chart({ data }) {
     const processedData = data
       .filter(d => {
         const date = new Date(d.date);
-        return date.getFullYear() >= 2007 && 
+        return date.getFullYear() >= 2006 && 
                date.getFullYear() <= 2024 && 
                d.word_count > 0;
       })
@@ -793,6 +241,49 @@ export function Chart({ data }) {
       .ease(d3.easeCubicInOut)
       .attr("x", d => rankScale(d.sequentialRank));
 
+    // Create legend for word count
+    const legendData = [
+      d3.min(processedData, d => d.word_count),
+      Math.round(d3.mean(processedData, d => d.word_count)),
+      d3.max(processedData, d => d.word_count)
+    ];
+
+    const legendGroup = svg.append("g")
+      .attr("class", "word-count-legend")
+      .attr("transform", `translate(${width - marginRight - 200}, ${marginTop + 60})`);
+
+    // Add legend title
+    legendGroup.append("text")
+      .attr("x", 0)
+      .attr("y", -10)
+      .attr("font-size", "12px")
+      .text("Word Count Legend");
+
+    // Create legend items
+    const legendItems = legendGroup.selectAll(".legend-item")
+      .data(legendData)
+      .enter()
+      .append("g")
+      .attr("class", "legend-item")
+      .attr("transform", (d, i) => `translate(0, ${i * 25})`);
+
+    // Add rectangles to legend
+    legendItems.append("rect")
+      .attr("x", 0)
+      .attr("y", 0)
+      .attr("width", d => widthScale(d * multiWidth))
+      .attr("height", d => heightScale(d * multiHeight))
+      .attr("fill", "black")
+      .attr("rx", 2)
+      .attr("ry", 2);
+
+    // Add text next to rectangles
+    legendItems.append("text")
+      .attr("x", 30)
+      .attr("y", 10)
+      .attr("font-size", "10px")
+      .text(d => `${d} words`);
+
     // Add hover effects
     rectangles
       .on("mouseover", (event, d) => {
@@ -822,11 +313,14 @@ export function Chart({ data }) {
   }, [data, sortMethod]);
 
   return (
-    <div>
-      <p className="mb-4 text-lg">Svalbard Articles Scatter Plot (2014-2024)</p>
-      <svg 
+    <div className="flex flex-col items-start mb-4">
+      <h1 className="text-2xl font-bold mb-2">Svalbardposten's Digital Transformation</h1>
+      <p className="text-md text-gray-600">
+        Arranged Monthly (2006-2024) <b>+</b> <span style={{color: 'red'}}>Sorted </span>by Article Word Count (monthly, weekly, daily)
+      </p>
+      <svg
         ref={svgRef}
-        width={width} 
+        width={width}
         height={height}
         className="bg-white"
       />
